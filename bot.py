@@ -73,10 +73,21 @@ features = ['open', 'high', 'low', 'close']
 #plt.show()
 
 # feature engineering
+splitted = filtered_df['date'].dt.strftime('%Y-%m-%d').str.split('-', expand=True)
+filtered_df['year'] = splitted[0].astype(int)
+filtered_df['month'] = splitted[1].astype(int)
+filtered_df['day'] = splitted[2].astype(int)
 
-splitted = df['date'].str.split('-', expand=True)
-df['year'] = splitted[0].astype(int)
-df['month'] = splitted[1].astype(int)
-df['day'] = splitted[2].astype(int)
+filtered_df.head()
 
-df.head()
+filtered_df['is_quarter_end'] = np.where(filtered_df['month']%3==0,1,0)
+
+filtered_df['open-close']  = filtered_df['open'] - filtered_df['close']
+filtered_df['low-high']  = filtered_df['low'] - filtered_df['high']
+
+# this seems very important. binary classification of the days the price went up. I'm sure this is where you can do a lot of fun stuff. Daily, monthly. Momentum. New features. etc.
+
+filtered_df['target'] = np.where(filtered_df['close'].shift(-1) > filtered_df['close'], 1, 0)
+
+print(filtered_df.head())
+

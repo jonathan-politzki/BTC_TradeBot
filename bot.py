@@ -118,14 +118,17 @@ for i in range(3):
   print('Validation Accuracy : ', metrics.roc_auc_score(Y_valid, models[i].predict_proba(X_valid)[:,1]))
   print()
 
-# lastly, a confusion matrix
-
+# Calculate predictions on the test set
 y_pred = models[0].predict(X_valid)
 
-# Create ConfusionMatrixDisplay
-disp = ConfusionMatrixDisplay.from_predictions(y_true=Y_valid, y_pred=y_pred)
+# Create confusion matrix
+cm = confusion_matrix(Y_valid, y_pred)
 
 # Plot confusion matrix
-disp.plot()
+plt.figure(figsize=(8, 6))
+sb.heatmap(cm, annot=True, cmap='Blues', fmt='g')
 plt.title('Confusion Matrix')
+plt.xlabel('Predicted')
+plt.ylabel('Actual')
 plt.show()
+

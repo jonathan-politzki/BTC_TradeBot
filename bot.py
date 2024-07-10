@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sb
-
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
@@ -108,10 +107,57 @@ print(X_train.shape, X_valid.shape)
 
 # now we are testing the models and stuff
 
-models = [LogisticRegression(), SVC(kernel='poly', probability=True), XGBClassifier()]
- 
+# Define the models with their respective parameters
+models = [
+    LogisticRegression(
+        penalty='l2',
+        C=1.0,
+        solver='lbfgs',
+        max_iter=100,
+        n_jobs=-1,
+        random_state=42
+    ),
+    SVC(
+        kernel='poly',
+        degree=3,
+        C=1.0,
+        probability=True,
+        gamma='scale',
+        coef0=0.0,
+        shrinking=True,
+        tol=0.001,
+        cache_size=200,
+        class_weight=None,
+        verbose=False,
+        max_iter=-1,
+        decision_function_shape='ovr',
+        break_ties=False,
+        random_state=42
+    ),
+    XGBClassifier(
+        n_estimators=100,
+        max_depth=3,
+        learning_rate=0.1,
+        subsample=1.0,
+        colsample_bytree=1.0,
+        objective='binary:logistic',
+        booster='gbtree',
+        gamma=0,
+        min_child_weight=1,
+        max_delta_step=0,
+        reg_alpha=0,
+        reg_lambda=1,
+        scale_pos_weight=1,
+        base_score=0.5,
+        random_state=42,
+        verbosity=0,
+        n_jobs=-1
+    )
+]
+
+# Train the models
 for i in range(3):
-  models[i].fit(X_train, Y_train)
+    models[i].fit(X_train, Y_train)
  
   print(f'{models[i]} : ')
   print('Training Accuracy : ', metrics.roc_auc_score(Y_train, models[i].predict_proba(X_train)[:,1]))

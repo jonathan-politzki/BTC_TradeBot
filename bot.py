@@ -158,11 +158,10 @@ models = [
 # Train the models
 for i in range(3):
     models[i].fit(X_train, Y_train)
- 
-  print(f'{models[i]} : ')
-  print('Training Accuracy : ', metrics.roc_auc_score(Y_train, models[i].predict_proba(X_train)[:,1]))
-  print('Validation Accuracy : ', metrics.roc_auc_score(Y_valid, models[i].predict_proba(X_valid)[:,1]))
-  print()
+    print(f'{models[i]} : ')
+    print('Training Accuracy : ', metrics.roc_auc_score(Y_train, models[i].predict_proba(X_train)[:,1]))
+    print('Validation Accuracy : ', metrics.roc_auc_score(Y_valid, models[i].predict_proba(X_valid)[:,1]))
+    print()
 
 # Calculate predictions on the test set
 y_pred = models[0].predict(X_valid)

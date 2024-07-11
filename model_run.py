@@ -1,6 +1,12 @@
+#import from other files
+from some_data import load_data, filtered_data, updated_data
+from feature_engineering import *
+from plotting import *
+from import_warnings import ignore_warnings
 
+#libraries
+import pandas as pd
 import numpy as np
-import seaborn as sb
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
@@ -10,19 +16,19 @@ from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
 from sklearn.metrics import accuracy_score  # Example of specific metric import from scikit-learn
 from xgboost import XGBClassifier
 
-#ignore warnings
+# Now you can call ignore_warnings to suppress warnings
 ignore_warnings()
 
 # Load the dataset and year groups
-load_data()
+df, start_date, end_date, new_start_date = load_data()
 
 # Filter the data for the data sets we want to use
 
 # earlier, larger dataset
-filtered_data(df, start_date, end_date)
+filtered_df = filtered_data(df, start_date, end_date)
 
 # more recent, smaller dataset
-updated_data(df, new_start_date)
+updated_df = updated_data(df, new_start_date)
 
 # plotting both older and newer data
 plot_data(filtered_df)
@@ -33,35 +39,15 @@ plot_data(updated_df)
 filtered_df.isnull().sum()
 updated_df.isnull().sum()
 
-# create features
+# create features 
+filtered_df_features()
+updated_df_features()
 
-features = ['open', 'high', 'low', 'close']
-
-# feature engineering
-splitted = filtered_df['date'].dt.strftime('%Y-%m-%d').str.split('-', expand=True)
-filtered_df['year'] = splitted[0].astype(int)
-filtered_df['month'] = splitted[1].astype(int)
-filtered_df['day'] = splitted[2].astype(int)
-filtered_df['is_quarter_end'] = np.where(filtered_df['month']%3==0,1,0)
-filtered_df['open-close']  = filtered_df['open'] - filtered_df['close']
-filtered_df['low-high']  = filtered_df['low'] - filtered_df['high']
-
-splitted = updated_df['date'].dt.strftime('%Y-%m-%d').str.split('-', expand=True)
-updated_df['year'] = splitted[0].astype(int)
-updated_df['month'] = splitted[1].astype(int)
-updated_df['day'] = splitted[2].astype(int)
-updated_df['is_quarter_end'] = np.where(updated_df['month']%3==0,1,0)
-updated_df['open-close']  = updated_df['open'] - updated_df['close']
-updated_df['low-high']  = updated_df['low'] - updated_df['high']
-
-# this seems very important. binary classification of the days the price went up. I'm sure this is where you can do a lot of fun stuff. Daily, monthly. Momentum. New features. etc.
-# id like to try this model with an RNN too
-
-filtered_df['target'] = np.where(filtered_df['close'].shift(-1) > filtered_df['close'], 1, 0)
-
-print(filtered_df.head())
+# create target variable
+create_target_var(df)
 
 # correlation mapping shows us that the date and OHLC are super correlated obviously. Test this later.
+correlation_mapping_filtered()
 
 #sb.heatmap(filtered_df.corr() > 0.9, annot=True, cbar=False)
 #plt.show()
